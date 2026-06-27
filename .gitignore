@@ -1,0 +1,18 @@
+# Secrets & Configuration
+config/api_keys.json
+
+# Cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Log files
+*.log
+output.log
+error.log
+
+# Virtual Environments
+.venv/
+venv/
+env/

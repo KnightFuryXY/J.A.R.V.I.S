@@ -1,0 +1,77 @@
+{
+  "identity": {
+    "full_name": {
+      "value": "Huzefa Jamil Sayyed",
+      "updated": "2026-04-10"
+    },
+    "name": {
+      "value": "Jarvis",
+      "updated": "2026-05-07"
+    },
+    "phone": {
+      "value": "+60172167235",
+      "updated": "2026-04-10"
+    },
+    "nationality": {
+      "value": "Indian",
+      "updated": "2026-04-15"
+    },
+    "creator": {
+      "value": "Huzefa",
+      "updated": "2026-05-07"
+    }
+  },
+  "preferences": {
+    "language": {
+      "value": "Urdu",
+      "updated": "2026-04-10"
+    },
+    "gaming_console": {
+      "value": "Xbox 360E",
+      "updated": "2026-04-28"
+    }
+  },
+  "projects": {
+    "freelancing_instagram": {
+      "value": "huzaifa.creative",
+      "updated": "2026-04-11"
+    },
+    "jarvis": {
+      "value": "AI assistant created by the user",
+      "updated": "2026-05-07"
+    },
+    "rebuilding_ferrari_with_dad": {
+      "value": "rebuilding a gated manual Ferrari with dad",
+      "updated": "2026-05-07"
+    },
+    "ferrari_gate_rebuild": {
+      "value": "Rebuilding a manual Ferrari gate with dad",
+      "updated": "2026-05-07"
+    }
+  },
+  "relationships": {
+    "husband_relationship": {
+      "value": "Husband finds fault with everything user says",
+      "updated": "2026-04-10"
+    },
+    "sister_name": {
+      "value": "Hamna",
+      "updated": "2026-04-10"
+    },
+    "sister_hamna": {
+      "value": "sister",
+      "updated": "2026-04-11"
+    },
+    "dad": {
+      "value": "Dad",
+      "updated": "2026-05-07"
+    }
+  },
+  "wishes": {},
+  "notes": {
+    "speaks_multiple_languages": {
+      "value": "speaks multiple languages",
+      "updated": "2026-04-15"
+    }
+  }
+}

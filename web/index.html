@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>J.A.R.V.I.S — Mark XXXV System Link</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Google Fonts for Cyberpunk/Sci-Fi aesthetics -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <meta name="theme-color" content="#050508">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+</head>
+<body class="layout-terminal-active"> <!-- Initial class sets the active layout -->
+
+    <!-- BACKGROUND HUD GRID & GLOWS -->
+    <div class="hud-grid"></div>
+    <div class="ambient-glow glow-blue"></div>
+    <div class="ambient-glow glow-cyan"></div>
+
+    <!-- GLOBAL CONNECTION / SYSTEM STATUS HEADER -->
+    <header class="global-header">
+        <div class="header-left">
+            <div class="logo">JARVIS <span class="model-badge">MARK XXXV</span></div>
+            <div class="status-pill-group">
+                <span class="status-indicator-dot" id="global-status-dot"></span>
+                <span class="status-text" id="global-status-text">OFFLINE</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="system-time" id="header-time">00:00:00</div>
+            <div class="connection-status-indicator" id="connection-status">DISCONNECTED</div>
+        </div>
+    </header>
+
+    <!-- MAIN APP WRAPPER -->
+    <main class="app-wrapper">
+
+        <!-- 1. MINIMAL FLOATING WIDGET (Always-On Overlay) -->
+        <div class="interface-container layout-widget" id="layout-widget" style="display: none;">
+            <div class="widget-drag-handle">
+                <span class="drag-dots">•••</span>
+                <span class="widget-title">JARVIS CORE</span>
+            </div>
+            
+            <div class="widget-content">
+                <!-- Glowing holographic orb visualizer -->
+                <div class="widget-core-container">
+                    <canvas id="widget-core-canvas" width="180" height="180"></canvas>
+                    <div class="widget-core-overlay"></div>
+                </div>
+                
+                <div class="widget-status-label" id="widget-status">STANDBY</div>
+
+                <!-- Expands when core is clicked -->
+                <div class="widget-chat-overlay" id="widget-chat-overlay">
+                    <div class="widget-chat-header">
+                        <span>TRANSMISSION LOG</span>
+                        <button class="widget-close-log" id="widget-close-log-btn">×</button>
+                    </div>
+                    <div class="widget-log-body" id="widget-expanded-log">
+                        <div class="log-entry system">Click Jarvis core or start talking...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compact Input -->
+            <div class="widget-input-bar">
+                <button class="widget-action-btn mic-btn" id="widget-mic-btn" title="Hold to Dictate">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                </button>
+                <input type="text" class="shared-input" id="widget-command-input" placeholder="Transmit instruction..." autocomplete="off">
+                <button class="widget-action-btn send-btn" id="widget-send-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+            </div>
+        </div>
+
+
+        <!-- 2. MULTI-PANEL TERMINAL (Power User Interface) -->
+        <div class="interface-container layout-terminal" id="layout-terminal">
+            <div class="terminal-grid">
+                
+                <!-- LEFT PANEL: Automation Workspace -->
+                <section class="terminal-panel panel-left">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <span class="icon">📁</span>
+                            <h2>SYSTEM DIRECTORY</h2>
+                        </div>
+                        <div class="panel-tabs">
+                            <button class="tab-btn active" data-target="workspace-tree">FILES</button>
+                            <button class="tab-btn" data-target="tasks-panel">TASKS</button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <!-- Workspace File Tree -->
+                        <div class="tab-content" id="workspace-tree">
+                            <div class="file-tree" id="file-tree-container">
+                                <!-- Generated dynamically -->
+                            </div>
+                        </div>
+                        <!-- Active Automation Tasks -->
+                        <div class="tab-content" id="tasks-panel" style="display: none;">
+                            <div class="automation-tasks-list">
+                                <div class="task-card running">
+                                    <div class="task-card-header">
+                                        <span class="task-name">Realtime Audio Interface</span>
+                                        <span class="task-badge">RUNNING</span>
+                                    </div>
+                                    <div class="task-progress-bar"><div class="progress" style="width: 100%;"></div></div>
+                                    <div class="task-meta">Thread: main · Latency: ~18ms</div>
+                                </div>
+                                <div class="task-card running">
+                                    <div class="task-card-header">
+                                        <span class="task-name">Vision Sensor Processor</span>
+                                        <span class="task-badge animate-blink">STANDBY</span>
+                                    </div>
+                                    <div class="task-progress-bar"><div class="progress" style="width: 35%;"></div></div>
+                                    <div class="task-meta">Target: Display Capturer</div>
+                                </div>
+                                <div class="task-card idle">
+                                    <div class="task-card-header">
+                                        <span class="task-name">Task Scheduler (cron)</span>
+                                        <span class="task-badge">IDLE</span>
+                                    </div>
+                                    <div class="task-progress-bar"><div class="progress" style="width: 0%;"></div></div>
+                                    <div class="task-meta">Awaiting scheduled reminder execution</div>
+                                </div>
+                                <div class="task-card completed">
+                                    <div class="task-card-header">
+                                        <span class="task-name">Memory Sync Engine</span>
+                                        <span class="task-badge">COMPLETED</span>
+                                    </div>
+                                    <div class="task-progress-bar"><div class="progress" style="width: 100%;"></div></div>
+                                    <div class="task-meta">Fact extraction complete</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CENTER PANEL: Chat Terminal -->
+                <section class="terminal-panel panel-center">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <span class="icon">💬</span>
+                            <h2>JARVIS DIALOGUE PROTOCOL</h2>
+                        </div>
+                        <span class="session-badge">SESSION LINK: ACTIVE</span>
+                    </div>
+                    <div class="panel-body main-chat-body" id="terminal-chat-log">
+                        <div class="log-entry system">System initialized. Awaiting connection...</div>
+                    </div>
+                </section>
+
+                <!-- RIGHT PANEL: Telemetry HUD -->
+                <section class="terminal-panel panel-right">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <span class="icon">📊</span>
+                            <h2>TELEMETRY HUD</h2>
+                        </div>
+                        <span class="live-indicator">LIVE</span>
+                    </div>
+                    <div class="panel-body telemetry-body">
+                        <!-- Chart Group -->
+                        <div class="telemetry-cell">
+                            <div class="telemetry-meta">
+                                <span>CPU ENGINE LOAD</span>
+                                <span class="telemetry-val" id="cpu-val">0%</span>
+                            </div>
+                            <div class="canvas-container">
+                                <canvas id="telemetry-cpu-canvas" height="65"></canvas>
+                            </div>
+                        </div>
+                        <div class="telemetry-cell">
+                            <div class="telemetry-meta">
+                                <span>SYSTEM MEMORY LOAD</span>
+                                <span class="telemetry-val" id="ram-val">0%</span>
+                            </div>
+                            <div class="canvas-container">
+                                <canvas id="telemetry-ram-canvas" height="65"></canvas>
+                            </div>
+                        </div>
+                        <div class="telemetry-cell">
+                            <div class="telemetry-meta">
+                                <span>API TRANSCEIVER LATENCY</span>
+                                <span class="telemetry-val" id="latency-val">0 ms</span>
+                            </div>
+                            <div class="canvas-container">
+                                <canvas id="telemetry-latency-canvas" height="65"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- System Specs Metadata -->
+                        <div class="hud-stats-grid">
+                            <div class="stat-box">
+                                <div class="label">CONNECTION TYPE</div>
+                                <div class="val">WebSocket Binary</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="label">SAMPLE RATE</div>
+                                <div class="val">16 kHz PCM (IN)</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="label">SPEECH SYNTH</div>
+                                <div class="val">24 kHz Audio</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="label">SYS STATUS</div>
+                                <div class="val" id="telemetry-sys-state">STANDBY</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- BOTTOM PANEL: Command Bar -->
+                <section class="terminal-panel panel-bottom">
+                    <div class="cli-bar">
+                        <span class="cli-prompt">JARVIS@MARK-XXXV:~$</span>
+                        <div class="cli-input-wrapper">
+                            <input type="text" class="shared-input cli-input" id="terminal-command-input" placeholder="Input action descriptor (e.g., 'open chrome', 'search weather')..." autocomplete="off">
+                        </div>
+                        <div class="cli-controls">
+                            <button class="cli-btn mic-btn" id="terminal-mic-btn" title="Hold to Speak">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                            </button>
+                            <button class="cli-btn send-btn" id="terminal-send-btn" title="Execute Command">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+
+        <!-- 3. MINIMALIST CLEAN CHAT (Focus / Mobile Interface) -->
+        <div class="interface-container layout-chat" id="layout-chat" style="display: none;">
+            
+            <!-- Slides Away Sidebar -->
+            <aside class="chat-sidebar collapsed" id="chat-sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-logo">SESSION FILES</div>
+                    <button class="sidebar-toggle-btn" id="sidebar-close-btn">×</button>
+                </div>
+                <div class="sidebar-sessions-list">
+                    <div class="session-item active">
+                        <div class="title">Current Dialogue Session</div>
+                        <div class="date">Active Session</div>
+                    </div>
+                    <div class="session-item">
+                        <div class="title">Web Automation Log</div>
+                        <div class="date">14:24 · Completed</div>
+                    </div>
+                    <div class="session-item">
+                        <div class="title">Flight Finder Query</div>
+                        <div class="date">Yesterday</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Chat Panel -->
+            <div class="chat-focused-area">
+                <!-- Top Panel Bar -->
+                <div class="chat-top-actions">
+                    <button class="sidebar-open-btn" id="sidebar-open-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                        <span>History</span>
+                    </button>
+                    
+                    <div class="right-quick-actions">
+                        <button class="action-btn" id="clear-chat-btn" title="Clear Chat History">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            <span>Clear</span>
+                        </button>
+                        <button class="action-btn" id="export-log-btn" title="Export Log file">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <span>Export</span>
+                        </button>
+                        <button class="action-btn" id="toggle-voice-btn" title="Mute/Unmute Mic">
+                            <svg class="unmuted-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                            <span id="voice-btn-label">Voice On</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Feed -->
+                <div class="chat-feed-scroll" id="clean-chat-log">
+                    <!-- Chronological chat log -->
+                    <div class="log-entry system">Initiated distraction-free chat grid. Awaiting interaction.</div>
+                </div>
+
+                <!-- Focused Input Bar -->
+                <div class="chat-focus-input-area">
+                    <div class="chat-focus-bar-wrapper">
+                        <button class="chat-input-btn mic-btn" id="clean-mic-btn" title="Hold to speak">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                        </button>
+                        <input type="text" class="shared-input focus-text-input" id="clean-command-input" placeholder="Type your message to Jarvis..." autocomplete="off">
+                        <button class="chat-input-btn send-btn" id="clean-send-btn" title="Send message">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- PERSISTENT FLOATING SWITCHER DOCK -->
+    <nav class="interface-switcher-dock" id="interface-dock">
+        <button class="dock-btn" id="switch-btn-widget" data-layout="widget" title="Always-On Widget">
+            <span class="dock-icon">🎛️</span>
+            <span class="dock-label">WIDGET</span>
+        </button>
+        <button class="dock-btn active" id="switch-btn-terminal" data-layout="terminal" title="Power-User Dashboard">
+            <span class="dock-icon">⌨️</span>
+            <span class="dock-label">TERMINAL</span>
+        </button>
+        <button class="dock-btn" id="switch-btn-chat" data-layout="chat" title="Minimal Chat">
+            <span class="dock-icon">💬</span>
+            <span class="dock-label">CHAT</span>
+        </button>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+</html>
